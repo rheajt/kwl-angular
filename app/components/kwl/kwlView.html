@@ -1,0 +1,42 @@
+<div class="container-fluid" ng-controller="KwlCtrl">
+  <div class="row">
+    <div class="col-xs-12 text-center">
+      <h1>{{ data[current] }}</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="panel panel-warning" ng-click="add('know', data[current])">
+        <div class="panel-heading">
+          <h2 class="panel-title">I <em>KNOW</em> this concept</h2>
+        </div>
+        <div class="panel-body">
+          <h2><span ng-repeat="each in kwl.know">{{ each }}</span></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel panel-success" ng-click="add('want', data[current])">
+        <div class="panel-heading">
+          <h2 class="panel-title">I <em>WANT</em> to know this concept</h2>
+        </div>
+        <div class="panel-body">
+          <h2><span ng-repeat="each in kwl.want">{{ each }}</span></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="panel panel-info" ng-click="add('learn', data[current])">
+        <div class="panel-heading">
+          <h2 class="panel-title">I <em>LEARNED</em> this concept</h2>
+        </div>
+        <div class="panel-body">
+        <h2><span ng-repeat="each in kwl.learn">{{ each }}</span></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" ng-hide="current < data.length">
+    <div class="col-xs-12">You are done</div>
+  </div>
+</div>
