@@ -1,3 +1,19 @@
 <div class="container" ng-controller="IndexCtrl">
-  {{ data }}
+  <div class="row">
+    <div class="col-xs-6 col-xs-offset-3">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search for..." ng-model="searchBox">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button">Search</button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <a ng-repeat="each in data | filter:searchBox" href="#/kwl/{{ each.id }}">
+    <div class="well">
+      <h1>{{ each.title }}</h1>
+      <h3><b>Examples of the concepts in this chart are: </b>{{ each.chart.join(', ') }}</h3>
+    </div>
+  </a>
 </div>

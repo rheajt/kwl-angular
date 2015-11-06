@@ -6,32 +6,63 @@ app.config(['$routeProvider', function($routeProvider) {
       templateUrl: 'app/components/index/indexView.html',
       controller: 'IndexCtrl'
     })
-    .when('/kwl', {
+    .when('/kwl/:id', {
       templateUrl: 'app/components/kwl/kwlView.html',
       controller: 'KwlCtrl'
     })
     .when('/newchart', {
       templateUrl: 'app/components/newchart/newchartView.html',
       controller: 'NewchartCtrl'
+    })
+    .otherwise({
+      redirectTo: '/'
     });
-}]);
-
-app.controller('IndexCtrl', ['$scope', function($scope) {
-
-  $scope.data = 'welcome';
 
 }]);
 
-app.controller('KwlCtrl', ['$scope', function($scope) {
+app.service('fireSrv', ['$location', function($location) {
+  var kwlCharts = {
+    "charts": [
+      {
+        "id": 1,
+        "title": "THis is a test",
+        "chart": ['this', 'is', 'a', 'test']
+      },
+      {
+        "id": 2,
+        "title": "ANother test",
+        "chart": ['i', 'am', 'trying', 'out', 'angular', 'services']
+      }
+    ]
+  };
 
-  $scope.data = ['this', 'is', 'a', 'test'];
-  $scope.current = 0;
-  $scope.kwl = {"know": [], "want": [], "learn": []};
+  return {
+    getAll: function() {
+      return kwlCharts.charts;
+    },
+    getChart: function(id) {
+      return kwlCharts.charts.filter(function(each) {return each.id == id})[0].chart;
+    }
+  };
+}]);
 
-  $scope.add = function(key, data) {
-    $scope.kwl[key].push(data);
-    $scope.current++;
-  }
+app.controller('IndexCtrl', ['$scope', 'fireSrv', function($scope, fireSrv) {
+
+  $scope.data = fireSrv.getAll();
+
+}]);
+
+app.controller('KwlCtrl', ['$scope', '$routeParams', 'fireSrv',
+  function($scope, $routeParams, fireSrv) {
+
+    $scope.data = fireSrv.getChart($routeParams.id);
+    $scope.current = 0;
+    $scope.kwl = {"know": [], "want": [], "learn": []};
+
+    $scope.add = function(key, data) {
+      $scope.kwl[key].push(data);
+      $scope.current++;
+    }
 
 }]);
 
