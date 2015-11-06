@@ -57,10 +57,12 @@ app.controller('KwlCtrl', ['$scope', '$routeParams', 'fireSrv',
 
     $scope.data = fireSrv.getChart($routeParams.id);
     $scope.current = 0;
-    $scope.kwl = {"know": [], "want": [], "learn": []};
+    var kwl = {"know": [], "want": [], "learn": []};
+    $scope.showKwl = {"know": "", "want": "", "learn": ""};
 
     $scope.add = function(key, data) {
-      $scope.kwl[key].push(data);
+      kwl[key].push(data);
+      $scope.showKwl[key] = kwl[key].join(', ');
       $scope.current++;
     }
 
