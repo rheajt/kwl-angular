@@ -1,4 +1,6 @@
-var app = angular.module('kwlApp', ['ngRoute']);
+var app = angular.module('kwlApp', ['ngRoute', 'firebase']);
+
+app.constant('FBURL', 'https://kwlcharts.firebaseio.com/');
 
 app.config(['$routeProvider', function($routeProvider) {
   $routeProvider
@@ -10,7 +12,7 @@ app.config(['$routeProvider', function($routeProvider) {
       templateUrl: 'app/components/kwl/kwlView.html',
       controller: 'KwlCtrl'
     })
-    .when('/newchart', {
+    .when('/new', {
       templateUrl: 'app/components/newchart/newchartView.html',
       controller: 'NewchartCtrl'
     })
@@ -20,63 +22,86 @@ app.config(['$routeProvider', function($routeProvider) {
 
 }]);
 
-app.service('fireSrv', ['$location', function($location) {
-  var kwlCharts = {
-    "charts": [
-      {
-        "id": 1,
-        "title": "THis is a test",
-        "chart": ['this', 'is', 'a', 'test']
-      },
-      {
-        "id": 2,
-        "title": "ANother test",
-        "chart": ['i', 'am', 'trying', 'out', 'angular', 'services']
-      }
-    ]
-  };
+app.factory('Auth', ['FBURL', '$firebaseAuth', function(FBURL, $firebaseAuth) {
+  var ref = new Firebase(FBURL);
+  var auth = $firebaseAuth(ref);
+  var authData = {};
+
+  auth.$onAuth(function(data) {
+    if(data) {
+      authData = data;
+    }
+  });
 
   return {
-    getAll: function() {
-      return kwlCharts.charts;
-    },
-    getChart: function(id) {
-      return kwlCharts.charts.filter(function(each) {return each.id == id})[0].chart;
-    }
-  };
+    auth: auth,
+    authData: authData
+  }
 }]);
 
-app.controller('IndexCtrl', ['$scope', 'fireSrv', function($scope, fireSrv) {
+app.service('Charts', ['FBURL', '$firebaseArray', '$firebaseObject', function(FBURL, $firebaseArray, $firebaseObject) {
+  var ref = new Firebase(FBURL + '/charts');
 
-  $scope.data = fireSrv.getAll();
+  this.ref = ref;
+
+  this.getCharts = function() {
+    return $firebaseArray(ref);
+  }
+
+  this.getChartById = function(id) {
+    return $firebaseObject(ref.child(id).child('concepts'));
+  }
+
+  this.setChart = function(chart) {
+    $firebaseArray(ref).$add(chart);
+  }
 
 }]);
 
-app.controller('KwlCtrl', ['$scope', '$routeParams', 'fireSrv',
-  function($scope, $routeParams, fireSrv) {
+app.controller('IndexCtrl', ['$scope', 'Auth', 'Charts', function($scope, Auth, Charts) {
 
-    $scope.data = fireSrv.getChart($routeParams.id);
+  $scope.charts = Charts.getCharts();
+
+}]);
+
+app.controller('KwlCtrl', ['$scope', '$routeParams', 'Charts',
+  function($scope, $routeParams, Charts) {
+
+    $scope.chart = Charts.getChartById($routeParams.id);
     $scope.current = 0;
+
+    Charts.ref.child($routeParams.id).child('concepts').once('value', function(snapshot) {
+      $scope.chartLength = snapshot.numChildren();
+    });
+
     var kwl = {"know": [], "want": [], "learn": []};
     $scope.showKwl = {"know": "", "want": "", "learn": ""};
 
     $scope.add = function(key, data) {
-      kwl[key].push(data);
-      $scope.showKwl[key] = kwl[key].join(', ');
-      $scope.current++;
+      if($scope.current < $scope.chartLength) {
+        kwl[key].push(data);
+        $scope.showKwl[key] = kwl[key].join(', ');
+        $scope.current++;
+      }
+    }
+
+    $scope.save = function() {
+      $scope.saved = 'not really saved anywhere!';
     }
 
 }]);
 
-app.controller('NewchartCtrl', ['$scope', function($scope) {
+app.controller('NewchartCtrl', ['$scope', 'Charts', function($scope, Charts) {
+  $scope.chart = {};
+  $scope.chart.concepts = [];
+
+  $scope.addConcept = function() {
+    $scope.chart.concepts.push($scope.concept);
+    $scope.concept = '';
+  }
 
   $scope.createChart = function() {
-    /************************
-    TODO: create a service that will store the chart information and forward the
-    user back to the index page where all the charts are displayed. search bar to
-    filter at the top of the page
-    *****************************/
-
+    Charts.setChart($scope.chart);
   }
 
 }])

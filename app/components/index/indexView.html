@@ -1,4 +1,4 @@
-<div class="container" ng-controller="IndexCtrl">
+<div class="container">
   <div class="row">
     <div class="col-xs-6 col-xs-offset-3">
       <div class="input-group">
@@ -10,10 +10,10 @@
     </div>
   </div>
   <hr>
-  <a ng-repeat="each in data | filter:searchBox" href="#/kwl/{{ each.id }}">
+  <a ng-repeat="each in charts | filter:searchBox" ng-href="#/kwl/{{ each.$id }}">
     <div class="well">
       <h1>{{ each.title }}</h1>
-      <h3><b>Examples of the concepts in this chart are: </b>{{ each.chart.join(', ') }}</h3>
+      <h3><b>The concepts in this chart are: </b>{{ each.concepts.join(', ') }}</h3>
     </div>
   </a>
 </div>

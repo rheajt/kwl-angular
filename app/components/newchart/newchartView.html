@@ -1,12 +1,15 @@
-<div class="container" ng-controller="NewchartCtrl">
+<div class="container">
   <form ng-submit="createChart()">
     <legend>Form title</legend>
 
     <div class="form-group">
-      <label for="">Something here:</label>
-      <input type="text" class="form-control" id="" placeholder="Input field">
+      <label for="Concept">What concepts did you cover?</label>
+      <input type="text" class="form-control" placeholder="Type your concept here..." ng-model="concept">
     </div>
 
+    <button type="button" class="btn btn-primary" ng-click="addConcept(concept)">Add</button>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
+  <hr>
+  <h3 ng-repeat="each in chart.concepts track by $index">{{ each }}</h3>
 </div>
