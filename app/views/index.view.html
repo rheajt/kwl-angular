@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xs-3">
+      <div ng-hide="user">
+        <button class="btn btn-primary" ng-click="auth.$signInWithPopup('google')">
+          Login with <i class="fa fa-google-plus"></i>
+        </button>
+      </div>
+      <div ng-show="user">
+        <img ng-src="{{ user.photoURL }}" class="img-circle img-responsive">
+        <h1 class="text-center">{{ user.displayName }}</h1>
+        <button class="btn btn-default btn-block"><i class="fa fa-plus"></i> Create a new chart</button>
+        <button class="btn btn-warning btn-block" ng-click="auth.$signOut()"><i class="fa fa-sign-out"></i> Sign out</button>
+      </div>
+    </div>
+    <div class="col-xs-9">
+      <div class="firechart thumbnail">
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="container">
+  <div class="row">
+    <div class="col-xs-6 col-xs-offset-3">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search for..." ng-model="searchBox">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button">Search</button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <a ng-repeat="each in charts | filter:searchBox" ng-href="#/kwl/{{ each.$id }}">
+    <div class="well">
+      <h1>{{ each.title }}</h1>
+      <h3><b>The concepts in this chart are: </b>{{ each.concepts.join(', ') }}</h3>
+    </div>
+  </a>
+</div> -->
